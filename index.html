@@ -651,7 +651,7 @@
 
             <div class="content">
                 <div class="version-footer" id="versionFooter">
-                    <span>v0.32</span>
+                    <span>v0.33</span>
                     <button onclick="logout()">Log Out</button>
                 </div>
                 <!-- REFERRALS PAGE -->
@@ -728,6 +728,25 @@
                         </div>
 
                         <div class="form-section">
+                            <h3>Security Settings</h3>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profilePassword">Password</label>
+                                    <input type="password" id="profilePassword" value="">
+                                </div>
+                            </div>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profileAccess">Access Level</label>
+                                    <select id="profileAccess" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;">
+                                        <option value="Client">Client</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
                             <h3>Additional Information</h3>
                             <div class="form-row full">
                                 <div class="form-group">
@@ -783,7 +802,7 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.32';
+        const APP_VERSION = '0.33';
 
         // Google Apps Script Configuration
         const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwKEfDbJP6soQ3-icEu7gQZtMJQWEYUbKUkf-s7fym-sgfzkD4To1uianNwK83f-XEx6g/exec';
@@ -1068,6 +1087,8 @@
                 document.getElementById('profileEmail').value = currentUser.email || '';
                 document.getElementById('profileBusiness').value = currentUser.business || '';
                 document.getElementById('profileABN').value = currentUser.abn || '';
+                document.getElementById('profilePassword').value = currentUser.password || '';
+                document.getElementById('profileAccess').value = currentUser.access || 'Client';
                 document.getElementById('profileNotes').value = currentUser.notes || '';
             }
         }
@@ -1078,6 +1099,8 @@
             currentUser.email = document.getElementById('profileEmail').value;
             currentUser.business = document.getElementById('profileBusiness').value;
             currentUser.abn = document.getElementById('profileABN').value;
+            currentUser.password = document.getElementById('profilePassword').value;
+            currentUser.access = document.getElementById('profileAccess').value;
             currentUser.notes = document.getElementById('profileNotes').value;
 
             localStorage.setItem('currentUser', JSON.stringify(currentUser));

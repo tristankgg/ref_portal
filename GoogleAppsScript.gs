@@ -20,7 +20,7 @@ function setupSheets() {
   if (!ss.getSheetByName(USERS_SHEET)) {
     ss.insertSheet(USERS_SHEET);
     const userSheet = ss.getSheetByName(USERS_SHEET);
-    userSheet.appendRow(['Contact Name', 'Email', 'Phone', 'Business Name', 'ABN', 'Notes', 'Last Updated']);
+    userSheet.appendRow(['Contact Name', 'Email', 'Password', 'Phone', 'Business Name', 'ABN', 'Notes', 'Access', 'Last Updated']);
   }
 }
 
@@ -157,13 +157,15 @@ function saveUser(params) {
   for (let i = 1; i < data.length; i++) {
     if (data[i][1] === userEmail) {
       // Update ONLY this user's row with their latest profile data
-      sheet.getRange(i + 1, 1, 1, 7).setValues([[
+      sheet.getRange(i + 1, 1, 1, 9).setValues([[
         params.name || '',
         userEmail, // Email stays the same (unique identifier)
+        params.password || '', // Password (column C, index 2)
         params.phone || '',
         params.business || '',
         params.abn || '',
         params.notes || '',
+        params.access || 'Client', // Access level: 'Client' or 'Admin' (column H, index 7)
         new Date().toISOString()
       ]]);
       found = true;
@@ -176,10 +178,12 @@ function saveUser(params) {
     sheet.appendRow([
       params.name || '',
       userEmail,
+      params.password || '',
       params.phone || '',
       params.business || '',
       params.abn || '',
       params.notes || '',
+      params.access || 'Client', // Default access is 'Client'
       new Date().toISOString()
     ]);
   }
@@ -230,11 +234,13 @@ function getUsers() {
     users.push({
       name: row[0],
       email: row[1],
-      phone: row[2],
-      business: row[3],
-      abn: row[4],
-      notes: row[5],
-      lastUpdated: row[6]
+      password: row[2],
+      phone: row[3],
+      business: row[4],
+      abn: row[5],
+      notes: row[6],
+      access: row[7],
+      lastUpdated: row[8]
     });
   }
   
