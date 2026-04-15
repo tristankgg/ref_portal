@@ -771,13 +771,11 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.24';
+        const APP_VERSION = '0.25';
 
-        // Google Sheets Configuration
-        const SHEET_ID = 'YOUR_SHEET_ID_HERE';
-        const API_KEY = 'YOUR_API_KEY_HERE';
-        const REFERRALS_RANGE = 'Referrals!A:F';
-        const USERS_RANGE = 'Users!A:G';
+        // Google Apps Script Configuration
+        const GAS_ENDPOINT = 'YOUR_GAS_DEPLOYMENT_URL_HERE';
+        // Format: https://script.googleapis.com/macros/s/{DEPLOYMENT_ID}/usercopy
 
         // Data Management
         let currentUser = null;
@@ -794,61 +792,43 @@
             document.getElementById('versionFooter').textContent = 'v' + APP_VERSION;
         });
 
-        // Google Sheets API Functions
-        async function appendToSheet(range, values) {
+        // Google Apps Script API Functions
+        async function sendToGAS(action, data) {
             try {
-                const response = await fetch(
-                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?key=${API_KEY}`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            values: [values],
-                            majorDimension: 'ROWS'
-                        })
-                    }
-                );
-                return await response.json();
+                const payload = { action, ...data };
+                const response = await fetch(GAS_ENDPOINT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                // With no-cors mode, we can't read the response
+                // But we know the request was sent
+                console.log('Data sent to Google Sheet:', payload);
+                return { success: true };
             } catch (error) {
-                console.error('Error appending to sheet:', error);
-                return null;
+                console.error('Error sending to Google Sheet:', error);
+                return { success: false, error: error.toString() };
             }
         }
 
-        async function updateSheetCell(range, values) {
+        async function getFromGAS(action) {
             try {
-                const response = await fetch(
-                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`,
-                    {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            values: values,
-                            majorDimension: 'ROWS'
-                        })
-                    }
-                );
-                return await response.json();
+                const response = await fetch(`${GAS_ENDPOINT}?action=${action}`, {
+                    method: 'GET',
+                    mode: 'no-cors'
+                });
+                
+                // With no-cors mode, we can't read the response directly
+                // So we'll rely on local storage as primary
+                console.log('Request sent to fetch ' + action);
+                return { success: true };
             } catch (error) {
-                console.error('Error updating sheet:', error);
-                return null;
-            }
-        }
-
-        async function getSheetData(range) {
-            try {
-                const response = await fetch(
-                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`
-                );
-                const data = await response.json();
-                return data.values || [];
-            } catch (error) {
-                console.error('Error reading sheet:', error);
-                return [];
+                console.error('Error fetching from Google Sheet:', error);
+                return { success: false };
             }
         }
 
@@ -975,15 +955,15 @@
         }
 
         async function saveReferralToSheet(referral) {
-            const values = [
-                referral.name,
-                referral.phone,
-                referral.business,
-                referral.email || '',
-                referral.notes || '',
-                referral.status
-            ];
-            await appendToSheet(REFERRALS_RANGE, values);
+            const data = {
+                name: referral.name,
+                phone: referral.phone,
+                business: referral.business,
+                email: referral.email,
+                notes: referral.notes,
+                status: referral.status
+            };
+            await sendToGAS('addReferral', data);
         }
 
         function editReferral(id) {
@@ -1094,16 +1074,15 @@
         }
 
         async function saveUserToSheet(user) {
-            const values = [
-                user.name,
-                user.email,
-                user.phone,
-                user.business,
-                user.abn || '',
-                user.notes || '',
-                new Date().toISOString()
-            ];
-            await appendToSheet(USERS_RANGE, values);
+            const data = {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                business: user.business,
+                abn: user.abn,
+                notes: user.notes
+            };
+            await sendToGAS('saveUser', data);
         }
 
         function cancelEditProfile() {
