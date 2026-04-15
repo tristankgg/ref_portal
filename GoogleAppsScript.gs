@@ -136,21 +136,30 @@ function deleteReferral(params) {
   }
 }
 
-// Save or update user profile
+// Save or update user profile - USER-SPECIFIC by EMAIL
+// Each user's email is unique, so when a user logs in and updates their profile,
+// only THEIR row in the Users sheet is updated
 function saveUser(params) {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   const sheet = ss.getSheetByName(USERS_SHEET);
   
+  // Email is the unique identifier - each logged-in user has their own email
+  const userEmail = params.email;
+  
+  if (!userEmail) {
+    return createResponse(false, 'Email is required to save user profile');
+  }
+  
   const data = sheet.getDataRange().getValues();
   let found = false;
   
-  // Check if user already exists (by email)
+  // Find the row for THIS user by matching their email (column B, index 1)
   for (let i = 1; i < data.length; i++) {
-    if (data[i][1] === params.email) {
-      // Update existing user
+    if (data[i][1] === userEmail) {
+      // Update ONLY this user's row with their latest profile data
       sheet.getRange(i + 1, 1, 1, 7).setValues([[
         params.name || '',
-        params.email || '',
+        userEmail, // Email stays the same (unique identifier)
         params.phone || '',
         params.business || '',
         params.abn || '',
@@ -163,10 +172,10 @@ function saveUser(params) {
   }
   
   if (!found) {
-    // Add new user
+    // This is a new user - create a new row for them
     sheet.appendRow([
       params.name || '',
-      params.email || '',
+      userEmail,
       params.phone || '',
       params.business || '',
       params.abn || '',
