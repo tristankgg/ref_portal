@@ -236,20 +236,21 @@
         }
         
         .version-footer button {
-            background: none;
+            background: #dc3545;
             border: none;
-            color: #4a90e2;
+            color: white;
             cursor: pointer;
-            padding: 0;
+            padding: 0.4rem 0.8rem;
             font-size: 12px;
-            text-decoration: underline;
             font-family: inherit;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-weight: 600;
+            transition: background 0.2s;
+            border-radius: 3px;
+            text-decoration: none;
         }
         
         .version-footer button:hover {
-            color: #357abd;
+            background: #a02622;
         }
 
         /* Hidden sections */
@@ -643,7 +644,7 @@
 
             <div class="content">
                 <div class="version-footer" id="versionFooter">
-                    <span>v0.30</span>
+                    <span>v0.31</span>
                     <button onclick="logout()">Log Out</button>
                 </div>
                 <!-- REFERRALS PAGE -->
@@ -775,7 +776,7 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.30';
+        const APP_VERSION = '0.31';
 
         // Google Apps Script Configuration
         const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwKEfDbJP6soQ3-icEu7gQZtMJQWEYUbKUkf-s7fym-sgfzkD4To1uianNwK83f-XEx6g/exec';
@@ -792,7 +793,11 @@
         // Set version on page load
         window.addEventListener('load', function() {
             document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
-            document.getElementById('versionFooter').textContent = 'v' + APP_VERSION;
+            // Only update the version span, not the entire footer
+            const versionSpan = document.querySelector('.version-footer span');
+            if (versionSpan) {
+                versionSpan.textContent = 'v' + APP_VERSION;
+            }
         });
 
         // Google Apps Script API Functions
