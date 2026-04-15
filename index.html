@@ -215,6 +215,20 @@
             padding: 2rem;
             background: #f5f5f5;
             overflow-y: auto;
+            position: relative;
+        }
+
+        .version-footer {
+            position: fixed;
+            bottom: 1rem;
+            left: 296px;
+            font-size: 11px;
+            color: #999;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
 
         /* Hidden sections */
@@ -545,6 +559,10 @@
             .profile-container {
                 max-width: 100%;
             }
+
+            .version-footer {
+                left: 1rem;
+            }
         }
     </style>
 </head>
@@ -567,7 +585,7 @@
                 </form>
                 <div class="login-footer">
                     <p>Developed by TGC</p>
-                    <p>v0.22</p>
+                    <p id="loginVersion">v0.23</p>
                 </div>
             </div>
         </div>
@@ -605,6 +623,7 @@
             </div>
 
             <div class="content">
+                <div class="version-footer" id="versionFooter">v0.23</div>
                 <!-- REFERRALS PAGE -->
                 <div id="referralsPage" class="page active">
                     <div class="referrals-header">
@@ -751,6 +770,9 @@
     </div>
 
     <script>
+        // Version Management
+        const APP_VERSION = '0.23';
+
         // Data Management
         let currentUser = null;
         let referrals = [];
@@ -759,6 +781,12 @@
         // Initialize
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
         document.getElementById('referralForm').addEventListener('submit', handleAddReferral);
+        
+        // Set version on page load
+        window.addEventListener('load', function() {
+            document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
+            document.getElementById('versionFooter').textContent = 'v' + APP_VERSION;
+        });
 
         function handleLogin(e) {
             e.preventDefault();
