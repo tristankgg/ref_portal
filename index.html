@@ -771,7 +771,13 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.23';
+        const APP_VERSION = '0.24';
+
+        // Google Sheets Configuration
+        const SHEET_ID = 'YOUR_SHEET_ID_HERE';
+        const API_KEY = 'YOUR_API_KEY_HERE';
+        const REFERRALS_RANGE = 'Referrals!A:F';
+        const USERS_RANGE = 'Users!A:G';
 
         // Data Management
         let currentUser = null;
@@ -787,6 +793,64 @@
             document.getElementById('loginVersion').textContent = 'v' + APP_VERSION;
             document.getElementById('versionFooter').textContent = 'v' + APP_VERSION;
         });
+
+        // Google Sheets API Functions
+        async function appendToSheet(range, values) {
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}:append?key=${API_KEY}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            values: [values],
+                            majorDimension: 'ROWS'
+                        })
+                    }
+                );
+                return await response.json();
+            } catch (error) {
+                console.error('Error appending to sheet:', error);
+                return null;
+            }
+        }
+
+        async function updateSheetCell(range, values) {
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            values: values,
+                            majorDimension: 'ROWS'
+                        })
+                    }
+                );
+                return await response.json();
+            } catch (error) {
+                console.error('Error updating sheet:', error);
+                return null;
+            }
+        }
+
+        async function getSheetData(range) {
+            try {
+                const response = await fetch(
+                    `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`
+                );
+                const data = await response.json();
+                return data.values || [];
+            } catch (error) {
+                console.error('Error reading sheet:', error);
+                return [];
+            }
+        }
 
         function handleLogin(e) {
             e.preventDefault();
@@ -901,11 +965,25 @@
                 referrals[index] = referral;
             } else {
                 referrals.push(referral);
+                // Save to Google Sheets
+                saveReferralToSheet(referral);
             }
 
             saveReferrals();
             renderReferrals();
             closeModal();
+        }
+
+        async function saveReferralToSheet(referral) {
+            const values = [
+                referral.name,
+                referral.phone,
+                referral.business,
+                referral.email || '',
+                referral.notes || '',
+                referral.status
+            ];
+            await appendToSheet(REFERRALS_RANGE, values);
         }
 
         function editReferral(id) {
@@ -1007,8 +1085,25 @@
             currentUser.notes = document.getElementById('profileNotes').value;
 
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Save to Google Sheets
+            saveUserToSheet(currentUser);
+            
             updateUserDisplay();
             alert('Profile saved successfully');
+        }
+
+        async function saveUserToSheet(user) {
+            const values = [
+                user.name,
+                user.email,
+                user.phone,
+                user.business,
+                user.abn || '',
+                user.notes || '',
+                new Date().toISOString()
+            ];
+            await appendToSheet(USERS_RANGE, values);
         }
 
         function cancelEditProfile() {
