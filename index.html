@@ -599,14 +599,11 @@
             <div class="menu-section">
                 <div class="menu-title">Account</div>
                 <div class="menu-item active" onclick="switchPage('referralsPage')">Referrals</div>
-                <div class="menu-item" onclick="switchPage('rewardsPage')">Rewards</div>
-                <div class="menu-item" onclick="switchPage('analyticsPage')">Analytics</div>
             </div>
             <div class="menu-section">
                 <div class="menu-title">Settings</div>
                 <div class="menu-item" onclick="switchPage('profilePage')">My Profile</div>
             </div>
-            <button class="logout-btn" onclick="logout()">Log Out</button>
         </div>
 
         <!-- MAIN CONTENT -->
@@ -623,7 +620,13 @@
             </div>
 
             <div class="content">
-                <div class="version-footer" id="versionFooter">v0.23</div>
+                <div class="version-footer" id="versionFooter">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 11px; color: #999;">v0.28</span>
+                        <span style="color: #ddd; font-size: 10px;">|</span>
+                        <button onclick="logout()" style="background: none; border: none; color: #999; cursor: pointer; padding: 0; font-size: 11px; text-decoration: underline; font-family: inherit;">Log Out</button>
+                    </div>
+                </div>
                 <!-- REFERRALS PAGE -->
                 <div id="referralsPage" class="page active">
                     <div class="referrals-header">
@@ -649,24 +652,6 @@
                                 <!-- Populated by JS -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <!-- REWARDS PAGE -->
-                <div id="rewardsPage" class="page">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">🎁</div>
-                        <h2 style="font-size: 18px; margin-bottom: 0.5rem;">Rewards</h2>
-                        <p>Rewards feature coming soon</p>
-                    </div>
-                </div>
-
-                <!-- ANALYTICS PAGE -->
-                <div id="analyticsPage" class="page">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📊</div>
-                        <h2 style="font-size: 18px; margin-bottom: 0.5rem;">Analytics</h2>
-                        <p>Analytics feature coming soon</p>
                     </div>
                 </div>
 
@@ -771,7 +756,7 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.27';
+        const APP_VERSION = '0.28';
 
         // Google Apps Script Configuration
         const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwKEfDbJP6soQ3-icEu7gQZtMJQWEYUbKUkf-s7fym-sgfzkD4To1uianNwK83f-XEx6g/exec';
@@ -873,13 +858,17 @@
             if (confirm('Are you sure you want to log out?')) {
                 currentUser = null;
                 referrals = [];
-                document.getElementById('loginPage').classList.add('active');
+                // Hide app layout and show login page
                 document.getElementById('appLayout').style.display = 'none';
+                document.getElementById('loginPage').classList.add('active');
+                // Reset form
                 document.getElementById('email').value = 'tristankgg@gmail.com';
                 document.getElementById('password').value = 'Password123!';
-                switchPage('referralsPage');
-                document.querySelector('.menu-item.active')?.classList.remove('active');
+                // Reset active menu item
+                document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
                 document.querySelector('.menu-item').classList.add('active');
+                // Reset page selection
+                switchPage('referralsPage');
             }
         }
 
