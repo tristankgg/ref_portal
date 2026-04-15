@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Referrals Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* ===== LOGIN PAGE ===== */
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background: #357abd;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: #1a2a4a;
+            color: white;
+            padding: 2rem 1.5rem;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            padding: 0.75rem;
+            background: #4a90e2;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .menu-section {
+            margin-bottom: 2rem;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .menu-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #aaa;
+            user-select: none;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(74, 144, 226, 0.3);
+        }
+
+        .menu-item.active {
+            background-color: #4a90e2;
+            color: white;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            margin-top: 3rem;
+            padding: 0.75rem 1rem;
+            background-color: rgba(200, 50, 50, 0.2);
+            color: #ff6b6b;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background-color: rgba(200, 50, 50, 0.4);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #333;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4a90e2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            background: #f5f5f5;
+            overflow-y: auto;
+        }
+
+        /* Hidden sections */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ===== REFERRALS PAGE ===== */
+        .referrals-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #357abd;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #4a90e2;
+            border: 1px solid #4a90e2;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f5ff;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 13px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-trash {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0.25rem;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .btn-icon:hover {
+            color: #333;
+        }
+
+        .btn-delete {
+            color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            color: #a02622;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
+        /* ===== PROFILE PAGE ===== */
+        .profile-container {
+            max-width: 600px;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4a90e2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 28px;
+        }
+
+        .profile-info h2 {
+            font-size: 22px;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-info p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-start;
+            margin-top: 2rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #888;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .menu-section {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .referrals-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn-group {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>Signature</h1>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="tristankgg@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" value="Password123!" required>
+                    </div>
+                    <button type="submit" class="login-btn">Sign In</button>
+                </form>
+                <div class="login-footer">
+                    <p>Developed by TGC</p>
+                    <p>v0.21</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- APP LAYOUT -->
+    <div id="appLayout" class="app-container" style="display: none;">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">🔷 Signature</div>
+            <div class="menu-section">
+                <div class="menu-title">Account</div>
+                <div class="menu-item active" onclick="switchPage('referralsPage')">Referrals</div>
+                <div class="menu-item" onclick="switchPage('rewardsPage')">Rewards</div>
+                <div class="menu-item" onclick="switchPage('analyticsPage')">Analytics</div>
+            </div>
+            <div class="menu-section">
+                <div class="menu-title">Settings</div>
+                <div class="menu-item" onclick="switchPage('profilePage')">My Profile</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Log Out</button>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="header">
+                <h1 id="pageTitle">Referrals</h1>
+                <div class="user-info">
+                    <div>
+                        <div id="userName" style="font-weight: 600; font-size: 14px;"></div>
+                        <div id="userCompany" style="font-size: 12px; color: #888;"></div>
+                    </div>
+                    <div class="user-avatar" id="userAvatar">TG</div>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- REFERRALS PAGE -->
+                <div id="referralsPage" class="page active">
+                    <div class="referrals-header">
+                        <h2>Referrals</h2>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="openAddModal()">+ Add Referral</button>
+                            <button class="btn btn-secondary" onclick="refreshReferrals()">Refresh</button>
+                        </div>
+                    </div>
+
+                    <div id="referralsTableContainer" class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Phone</th>
+                                    <th>Business</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="referralsBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- REWARDS PAGE -->
+                <div id="rewardsPage" class="page">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎁</div>
+                        <h2 style="font-size: 18px; margin-bottom: 0.5rem;">Rewards</h2>
+                        <p>Rewards feature coming soon</p>
+                    </div>
+                </div>
+
+                <!-- ANALYTICS PAGE -->
+                <div id="analyticsPage" class="page">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <h2 style="font-size: 18px; margin-bottom: 0.5rem;">Analytics</h2>
+                        <p>Analytics feature coming soon</p>
+                    </div>
+                </div>
+
+                <!-- PROFILE PAGE -->
+                <div id="profilePage" class="page">
+                    <div class="profile-container">
+                        <div class="profile-header">
+                            <div class="profile-avatar" id="profileAvatar">TG</div>
+                            <div class="profile-info">
+                                <h2 id="profileName">Tristan Gallagher</h2>
+                                <p id="profileCompany">Kitchen Installation Co.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Contact Information</h3>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profileContactName">Contact Name</label>
+                                    <input type="text" id="profileContactName" value="">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profilePhone">Phone</label>
+                                    <input type="tel" id="profilePhone" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileEmail">Email</label>
+                                    <input type="email" id="profileEmail" value="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Business Information</h3>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profileBusiness">Business Name</label>
+                                    <input type="text" id="profileBusiness" value="">
+                                </div>
+                            </div>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profileABN">ABN (Australian Business Number)</label>
+                                    <input type="text" id="profileABN" value="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Additional Information</h3>
+                            <div class="form-row full">
+                                <div class="form-group">
+                                    <label for="profileNotes">Notes</label>
+                                    <textarea id="profileNotes" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; min-height: 100px;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" onclick="saveProfile()">Save</button>
+                            <button class="btn btn-cancel" onclick="cancelEditProfile()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <!-- Add/Edit Referral Modal -->
+    <div id="referralModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Add Referral</div>
+            <form id="referralForm">
+                <div class="form-group">
+                    <label for="refName">Customer name *</label>
+                    <input type="text" id="refName" required>
+                </div>
+                <div class="form-group">
+                    <label for="refPhone">Phone number *</label>
+                    <input type="tel" id="refPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="refBusiness">Business *</label>
+                    <input type="text" id="refBusiness" required>
+                </div>
+                <div class="form-group">
+                    <label for="refEmail">Email (optional)</label>
+                    <input type="email" id="refEmail">
+                </div>
+                <div class="form-group">
+                    <label for="refNotes">Notes (optional)</label>
+                    <textarea id="refNotes" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; min-height: 80px;"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Management
+        let currentUser = null;
+        let referrals = [];
+        let editingReferralId = null;
+
+        // Initialize
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('referralForm').addEventListener('submit', handleAddReferral);
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Simple validation
+            if (email === 'tristankgg@gmail.com' && password === 'Password123!') {
+                currentUser = {
+                    email: email,
+                    name: 'Tristan Gallagher',
+                    company: 'Kitchen Installation Co.',
+                    phone: '',
+                    business: '',
+                    abn: '',
+                    notes: ''
+                };
+                loginSuccess();
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        function loginSuccess() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('appLayout').style.display = 'flex';
+            updateUserDisplay();
+            loadReferrals();
+            loadProfile();
+        }
+
+        function updateUserDisplay() {
+            const initials = currentUser.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userCompany').textContent = currentUser.company;
+            document.getElementById('userAvatar').textContent = initials;
+            document.getElementById('profileAvatar').textContent = initials;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to log out?')) {
+                currentUser = null;
+                referrals = [];
+                document.getElementById('loginPage').classList.add('active');
+                document.getElementById('appLayout').style.display = 'none';
+                document.getElementById('email').value = 'tristankgg@gmail.com';
+                document.getElementById('password').value = 'Password123!';
+                switchPage('referralsPage');
+                document.querySelector('.menu-item.active')?.classList.remove('active');
+                document.querySelector('.menu-item').classList.add('active');
+            }
+        }
+
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update active menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            event.target.classList.add('active');
+
+            // Update header title
+            const titles = {
+                'referralsPage': 'Referrals',
+                'rewardsPage': 'Rewards',
+                'analyticsPage': 'Analytics',
+                'profilePage': 'My Profile'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageId] || 'Dashboard';
+
+            if (pageId === 'profilePage') {
+                loadProfile();
+            }
+        }
+
+        function openAddModal() {
+            editingReferralId = null;
+            document.getElementById('modalTitle').textContent = 'Add Referral';
+            document.getElementById('referralForm').reset();
+            document.getElementById('referralModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('referralModal').classList.remove('active');
+            editingReferralId = null;
+        }
+
+        function handleAddReferral(e) {
+            e.preventDefault();
+
+            const referral = {
+                id: editingReferralId || Date.now().toString(),
+                name: document.getElementById('refName').value,
+                phone: document.getElementById('refPhone').value,
+                business: document.getElementById('refBusiness').value,
+                email: document.getElementById('refEmail').value,
+                notes: document.getElementById('refNotes').value,
+                status: editingReferralId ? referrals.find(r => r.id === editingReferralId).status : 'pending',
+                createdAt: editingReferralId ? referrals.find(r => r.id === editingReferralId).createdAt : new Date().toISOString()
+            };
+
+            if (editingReferralId) {
+                const index = referrals.findIndex(r => r.id === editingReferralId);
+                referrals[index] = referral;
+            } else {
+                referrals.push(referral);
+            }
+
+            saveReferrals();
+            renderReferrals();
+            closeModal();
+        }
+
+        function editReferral(id) {
+            const referral = referrals.find(r => r.id === id);
+            if (referral) {
+                editingReferralId = id;
+                document.getElementById('modalTitle').textContent = 'Edit Referral';
+                document.getElementById('refName').value = referral.name;
+                document.getElementById('refPhone').value = referral.phone;
+                document.getElementById('refBusiness').value = referral.business;
+                document.getElementById('refEmail').value = referral.email || '';
+                document.getElementById('refNotes').value = referral.notes || '';
+                document.getElementById('referralModal').classList.add('active');
+            }
+        }
+
+        function deleteReferral(id) {
+            const referral = referrals.find(r => r.id === id);
+            if (referral.status === 'trash') {
+                if (confirm('Permanently delete this referral?')) {
+                    referrals = referrals.filter(r => r.id !== id);
+                    saveReferrals();
+                    renderReferrals();
+                }
+            } else {
+                referral.status = 'trash';
+                saveReferrals();
+                renderReferrals();
+            }
+        }
+
+        function renderReferrals() {
+            const tbody = document.getElementById('referralsBody');
+            const visibleReferrals = referrals.filter(r => r.status !== 'trash');
+
+            if (visibleReferrals.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No referrals yet. Click "Add Referral" to create one.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = visibleReferrals.map(ref => `
+                <tr>
+                    <td>${ref.name}</td>
+                    <td>${ref.phone}</td>
+                    <td>${ref.business}</td>
+                    <td><span class="status-badge status-${ref.status}">${ref.status}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon" onclick="editReferral('${ref.id}')" title="Edit">✏️</button>
+                            <button class="btn-icon btn-delete" onclick="deleteReferral('${ref.id}')" title="Delete">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function refreshReferrals() {
+            renderReferrals();
+            alert('Referrals refreshed');
+        }
+
+        function loadReferrals() {
+            const saved = localStorage.getItem('referrals');
+            if (saved) {
+                referrals = JSON.parse(saved);
+            } else {
+                // Sample data
+                referrals = [
+                    { id: '1', name: 'fewfew', phone: '4564564', business: '12312fdfw', status: 'pending', email: '', notes: '', createdAt: new Date().toISOString() },
+                    { id: '2', name: 'ergbrie', phone: '432432', business: 'gregreerg', status: 'pending', email: '', notes: '', createdAt: new Date().toISOString() }
+                ];
+            }
+            renderReferrals();
+        }
+
+        function saveReferrals() {
+            localStorage.setItem('referrals', JSON.stringify(referrals));
+        }
+
+        function loadProfile() {
+            if (currentUser) {
+                document.getElementById('profileName').textContent = currentUser.name;
+                document.getElementById('profileCompany').textContent = currentUser.company;
+                document.getElementById('profileContactName').value = currentUser.name || '';
+                document.getElementById('profilePhone').value = currentUser.phone || '';
+                document.getElementById('profileEmail').value = currentUser.email || '';
+                document.getElementById('profileBusiness').value = currentUser.business || '';
+                document.getElementById('profileABN').value = currentUser.abn || '';
+                document.getElementById('profileNotes').value = currentUser.notes || '';
+            }
+        }
+
+        function saveProfile() {
+            currentUser.name = document.getElementById('profileContactName').value;
+            currentUser.phone = document.getElementById('profilePhone').value;
+            currentUser.email = document.getElementById('profileEmail').value;
+            currentUser.business = document.getElementById('profileBusiness').value;
+            currentUser.abn = document.getElementById('profileABN').value;
+            currentUser.notes = document.getElementById('profileNotes').value;
+
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserDisplay();
+            alert('Profile saved successfully');
+        }
+
+        function cancelEditProfile() {
+            loadProfile();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('referralModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
