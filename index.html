@@ -221,14 +221,17 @@
         .version-footer {
             position: fixed;
             bottom: 1rem;
-            left: 296px;
+            left: 1rem;
             font-size: 11px;
             color: #999;
             background: white;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         /* Hidden sections */
@@ -562,6 +565,7 @@
 
             .version-footer {
                 left: 1rem;
+                bottom: 1rem;
             }
         }
     </style>
@@ -621,11 +625,9 @@
 
             <div class="content">
                 <div class="version-footer" id="versionFooter">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 11px; color: #999;">v0.28</span>
-                        <span style="color: #ddd; font-size: 10px;">|</span>
-                        <button onclick="logout()" style="background: none; border: none; color: #999; cursor: pointer; padding: 0; font-size: 11px; text-decoration: underline; font-family: inherit;">Log Out</button>
-                    </div>
+                    <span>v0.28</span>
+                    <span style="color: #ddd;">|</span>
+                    <button onclick="logout()" style="background: none; border: none; color: #999; cursor: pointer; padding: 0; font-size: 11px; text-decoration: underline; font-family: inherit;">Log Out</button>
                 </div>
                 <!-- REFERRALS PAGE -->
                 <div id="referralsPage" class="page active">
