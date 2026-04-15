@@ -408,7 +408,7 @@
 
         /* ===== PROFILE PAGE ===== */
         .profile-container {
-            max-width: 600px;
+            max-width: 1000px;
             background: white;
             padding: 2rem;
             border-radius: 8px;
@@ -419,7 +419,9 @@
             display: flex;
             align-items: center;
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
         }
 
         .profile-avatar {
@@ -450,21 +452,27 @@
         }
 
         .form-section h3 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             margin-bottom: 1rem;
             color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 1rem;
             margin-bottom: 1rem;
         }
 
         .form-row.full {
             grid-template-columns: 1fr;
+        }
+
+        .form-row.half {
+            grid-template-columns: 1fr 1fr;
         }
 
         .profile-actions {
@@ -491,6 +499,12 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .app-container {
                 flex-direction: column;
@@ -526,6 +540,10 @@
             .btn {
                 flex: 1;
                 min-width: 120px;
+            }
+
+            .profile-container {
+                max-width: 100%;
             }
         }
     </style>
@@ -661,17 +679,15 @@
                                     <label for="profileEmail">Email</label>
                                     <input type="email" id="profileEmail" value="">
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="form-section">
-                            <h3>Business Information</h3>
-                            <div class="form-row full">
                                 <div class="form-group">
                                     <label for="profileBusiness">Business Name</label>
                                     <input type="text" id="profileBusiness" value="">
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>Business Information</h3>
                             <div class="form-row full">
                                 <div class="form-group">
                                     <label for="profileABN">ABN (Australian Business Number)</label>
@@ -685,7 +701,7 @@
                             <div class="form-row full">
                                 <div class="form-group">
                                     <label for="profileNotes">Notes</label>
-                                    <textarea id="profileNotes" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; min-height: 100px;"></textarea>
+                                    <textarea id="profileNotes" style="padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; min-height: 80px;"></textarea>
                                 </div>
                             </div>
                         </div>
