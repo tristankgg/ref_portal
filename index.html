@@ -651,7 +651,7 @@
 
             <div class="content">
                 <div class="version-footer" id="versionFooter">
-                    <span>v0.35</span>
+                    <span>v0.36</span>
                     <button onclick="logout()">Log Out</button>
                 </div>
                 <!-- REFERRALS PAGE -->
@@ -802,7 +802,7 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.35';
+        const APP_VERSION = '0.36';
 
         // Server-Side PHP API Configuration
         // Using local tgnet.com.au server for JSON database storage
@@ -1070,16 +1070,33 @@
             alert('Referrals refreshed');
         }
 
-        function loadReferrals() {
-            const saved = localStorage.getItem('referrals');
-            if (saved) {
-                referrals = JSON.parse(saved);
-            } else {
-                // Sample data
-                referrals = [
-                    { id: '1', name: 'fewfew', phone: '4564564', business: '12312fdfw', status: 'pending', email: '', notes: '', createdAt: new Date().toISOString() },
-                    { id: '2', name: 'ergbrie', phone: '432432', business: 'gregreerg', status: 'pending', email: '', notes: '', createdAt: new Date().toISOString() }
-                ];
+        async function loadReferrals() {
+            try {
+                // Try to load from server API first
+                const response = await getFromAPI('getReferrals');
+                if (response && response.success && response.data) {
+                    referrals = response.data;
+                    console.log('Referrals loaded from server:', referrals);
+                } else {
+                    // Fallback to localStorage
+                    const saved = localStorage.getItem('referrals');
+                    if (saved) {
+                        referrals = JSON.parse(saved);
+                        console.log('Referrals loaded from localStorage');
+                    } else {
+                        referrals = [];
+                        console.log('No referrals found');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading referrals:', error);
+                // Fallback to localStorage
+                const saved = localStorage.getItem('referrals');
+                if (saved) {
+                    referrals = JSON.parse(saved);
+                } else {
+                    referrals = [];
+                }
             }
             renderReferrals();
         }
@@ -1126,12 +1143,14 @@
             const data = {
                 name: user.name,
                 email: user.email,
+                password: user.password,
                 phone: user.phone,
                 business: user.business,
                 abn: user.abn,
-                notes: user.notes
+                notes: user.notes,
+                access: user.access
             };
-            await sendToGAS('saveUser', data);
+            await sendToAPI('saveUser', data);
         }
 
         function cancelEditProfile() {
