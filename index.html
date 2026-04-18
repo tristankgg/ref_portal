@@ -651,7 +651,7 @@
 
             <div class="content">
                 <div class="version-footer" id="versionFooter">
-                    <span>v0.34</span>
+                    <span>v0.35</span>
                     <button onclick="logout()">Log Out</button>
                 </div>
                 <!-- REFERRALS PAGE -->
@@ -802,10 +802,11 @@
 
     <script>
         // Version Management
-        const APP_VERSION = '0.34';
+        const APP_VERSION = '0.35';
 
-        // Google Apps Script Configuration
-        const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwKEfDbJP6soQ3-icEu7gQZtMJQWEYUbKUkf-s7fym-sgfzkD4To1uianNwK83f-XEx6g/exec';
+        // Server-Side PHP API Configuration
+        // Using local tgnet.com.au server for JSON database storage
+        const API_ENDPOINT = 'https://tgnet.com.au/database/api.php';
 
         // Data Management
         let currentUser = null;
@@ -827,43 +828,52 @@
         });
 
         // Google Apps Script API Functions
-        async function sendToGAS(action, data) {
+        async function sendToAPI(action, data) {
             try {
                 const payload = { action, ...data };
-                const response = await fetch(GAS_ENDPOINT, {
+                const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(payload)
                 });
                 
-                // With no-cors mode, we can't read the response
-                // But we know the request was sent
-                console.log('Data sent to Google Sheet:', payload);
-                return { success: true };
+                const result = await response.json();
+                console.log('Data sent to server:', payload);
+                console.log('Server response:', result);
+                return result;
             } catch (error) {
-                console.error('Error sending to Google Sheet:', error);
+                console.error('Error sending to server:', error);
                 return { success: false, error: error.toString() };
             }
         }
 
-        async function getFromGAS(action) {
+        async function getFromAPI(action) {
             try {
-                const response = await fetch(`${GAS_ENDPOINT}?action=${action}`, {
+                const response = await fetch(`${API_ENDPOINT}?action=${action}`, {
                     method: 'GET',
-                    mode: 'no-cors'
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
                 
-                // With no-cors mode, we can't read the response directly
-                // So we'll rely on local storage as primary
-                console.log('Request sent to fetch ' + action);
-                return { success: true };
+                const result = await response.json();
+                console.log('Data retrieved from server:', result);
+                return result;
             } catch (error) {
-                console.error('Error fetching from Google Sheet:', error);
+                console.error('Error fetching from server:', error);
                 return { success: false };
             }
+        }
+
+        // Keep old function names for compatibility
+        async function sendToGAS(action, data) {
+            return sendToAPI(action, data);
+        }
+
+        async function getFromGAS(action) {
+            return getFromAPI(action);
         }
 
         function handleLogin(e) {
